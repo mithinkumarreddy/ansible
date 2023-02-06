@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  user: root
+  become: yes
+  connection: ssh
+
+  tasks:
+
+    - name: getting git repo
+      git:
+        repo: https://github.com/mithinkumarreddy/myweb-01.git
+        dest: /root/myweb

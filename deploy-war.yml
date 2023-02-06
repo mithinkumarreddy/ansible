@@ -1,0 +1,12 @@
+--- 
+- hosts: dev-2
+  user: root
+  become: yes
+  connection: ssh
+
+  tasks:
+
+    - name: deploying war file to client servers
+      copy:
+        src: /root/myweb/target/myweb-8.3.2-SNAPSHOT.war
+        dest: /root/tomcat/webapps/ZOMATO.war

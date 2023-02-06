@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  user: root
+  become: yes
+  connection: ssh
+
+  tasks:
+    
+    - name: getting WAR file
+      shell: mvn clean package
+      args:
+        chdir: /root/myweb

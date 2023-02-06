@@ -1,0 +1,39 @@
+---
+- hosts: localhost
+  user: root
+  become: yes
+  connection: ssh
+
+  tasks:
+
+    - name: installing git, java 1.8.0, and maven
+      action: yum name={{item}} state=present
+      with_items:
+        - git
+        - java-1.8.0-openjdk
+        - maven
+
+    - name: getting links for jenkins
+      get_url:
+        url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+        dest: /etc/yum.repos.d/jenkins.repo
+
+    - name: getting key for jenkins.io
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+    - name: install java11
+      command: amazon-linux-extras install java-openjdk11 -y
+
+    - name: install jenkins
+      command: yum install jenkins -y
+      notify:
+        - start jenkins
+  handlers:
+    - name: start jenkins
+      service:
+        name: jenkins
+        state: restarted
+
+
