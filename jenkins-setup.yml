@@ -6,6 +6,9 @@
 
   tasks:
 
+    - name: install java11
+      command: amazon-linux-extras install java-openjdk11 -y
+
     - name: installing git, java 1.8.0, and maven
       action: yum name={{item}} state=present
       with_items:
@@ -23,13 +26,11 @@
         state: present
         key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
 
-    - name: install java11
-      command: amazon-linux-extras install java-openjdk11 -y
-
     - name: install jenkins
       command: yum install jenkins -y
-      notify:
+      notify:  
         - start jenkins
+
   handlers:
     - name: start jenkins
       service:

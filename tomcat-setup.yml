@@ -6,29 +6,47 @@
 
   tasks:
 
-    - name: getting link from dlcdn.apache.org
-      get_url:
-        url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.71/bin/apache-tomcat-9.0.71.tar.gz"
-        dest: "/root/"
+    - name: to check tomcat present or not
+      file:
+        path: /root/tomcat
+        state: directory
+      register: directory_check
 
-    - name: untar the apache-tomcat-9.0.71.tar.gz
-      command: tar -zxvf apache-tomcat-9.0.71.tar.gz
+    - block:
 
-    - name: rename apache-tomcat-9.0.71.tar.gz to tomcat
-      command: mv apache-tomcat-9.0.71 tomcat
+      - name: getting link from dlcdn.apache.org
+        get_url:
+          url: "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.71/bin/apache-tomcat-9.0.71.tar.gz"
+          dest: "/root/"
+       
+      - name: untar the apache-tomcat-9.0.71.tar.gz
+        command: tar -zxvf apache-tomcat-9.0.71.tar.gz
 
-    - name: install java11
-      command: amazon-linux-extras install java-openjdk11 -y 
+      - name: delete tomcat folder automatically created while checking for it
+        file:
+          path: /root/tomcat/
+          state: absent
+        ignore_errors: yes
 
-    - name: modify context.xml file
-      template:
-        src: context.xml
-        dest: /root/tomcat/webapps/manager/META-INF/context.xml
+      - name: rename apache-tomcat-9.0.71.tar.gz to tomcat
+        command: mv apache-tomcat-9.0.71 tomcat
 
-    - name: modify tomcat-users.xml file 
-      template:
-        src: tomcat-users.xml
-        dest: /root/tomcat/conf/tomcat-users.xml
+      - name: install java11
+        command: amazon-linux-extras install java-openjdk11 -y 
 
-    - name: start tomcat
-      shell: nohup /root/tomcat/bin/startup.sh
+      - name: modify context.xml file
+        template:
+          src: context.xml
+          dest: /root/tomcat/webapps/manager/META-INF/context.xml
+
+      - name: modify tomcat-users.xml file 
+        template:
+          src: tomcat-users.xml
+          dest: /root/tomcat/conf/tomcat-users.xml
+
+      - name: start tomcat
+        shell: nohup /root/tomcat/bin/startup.sh
+      when: not directory_check.stat.exists is defined
+      
+
+
