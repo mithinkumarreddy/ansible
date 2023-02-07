@@ -7,9 +7,8 @@
   tasks:
 
     - name: to check tomcat present or not
-      file:
+      stat:
         path: /root/tomcat
-        state: directory
       register: directory_check
 
     - block:
@@ -21,12 +20,6 @@
        
       - name: untar the apache-tomcat-9.0.71.tar.gz
         command: tar -zxvf apache-tomcat-9.0.71.tar.gz
-
-      - name: delete tomcat folder automatically created while checking for it
-        file:
-          path: /root/tomcat/
-          state: absent
-        ignore_errors: yes
 
       - name: rename apache-tomcat-9.0.71.tar.gz to tomcat
         command: mv apache-tomcat-9.0.71 tomcat
